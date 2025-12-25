@@ -243,8 +243,11 @@
             </ul>
         </div>
 
-        <a href="chrome-extension://ffpagmagmhlapdmoholnopeheideoojl/popup.html" class="button" id="tryAgain">Try Again</a>
-        <a href="javascript:window.close();" class="button button-secondary">Close</a>
+        <p style="margin-bottom: 24px; color: #4a5568; font-size: 15px;">
+            <strong>To try again:</strong> Please close this page and use the Buy button in the SubWatch extension.
+        </p>
+
+        <a href="javascript:window.close();" class="button">Close</a>
 
         <a href="mailto:support@subwatch.app" class="support-link">Contact Support</a>
     </div>
@@ -306,11 +309,6 @@
                 transactionId: transactionId,
                 timestamp: Date.now()
             }, '*');
-        }
-
-        // Update try again link with actual extension ID if available
-        if (chrome?.runtime?.id) {
-            document.getElementById('tryAgain').href = `chrome-extension://${chrome.runtime.id}/popup.html`;
         }
     </script>
 </body>

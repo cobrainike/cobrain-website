@@ -193,7 +193,7 @@
         </div>
         
         <h1>Payment Successful!</h1>
-        <p>Your subscription payment has been processed successfully. You now have full access to SubWatch premium features.</p>
+        <p id="successMessage">Your payment has been processed successfully.</p>
         
         <div class="details" id="paymentDetails">
             <div class="details-row">
@@ -219,6 +219,29 @@
         const transactionId = urlParams.get('t') || urlParams.get('TransactionId') || urlParams.get('OrderCode');
         const orderCode = urlParams.get('OrderCode');
         const eventId = urlParams.get('EventId');
+
+        // Get pending purchase info to determine payment type
+        let purchaseType = 'subscription'; // default
+        let pageQuantity = 0;
+        
+        try {
+            const pendingPurchaseStr = localStorage.getItem('pendingPurchase');
+            if (pendingPurchaseStr) {
+                const pendingPurchase = JSON.parse(pendingPurchaseStr);
+                purchaseType = pendingPurchase.type || 'subscription';
+                pageQuantity = pendingPurchase.pageQuantity || 0;
+            }
+        } catch (e) {
+            console.log('Could not read pending purchase info:', e);
+        }
+
+        // Update success message based on payment type
+        const successMessageEl = document.getElementById('successMessage');
+        if (purchaseType === 'pages') {
+            successMessageEl.textContent = `Your extra pages payment has been processed successfully. You now have extra ${pageQuantity.toLocaleString()} pages to detect with SubWatch.`;
+        } else {
+            successMessageEl.textContent = 'Your subscription payment has been processed successfully. You now have full access to SubWatch premium features.';
+        }
 
         // Display transaction details
         if (transactionId) {

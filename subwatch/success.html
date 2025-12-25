@@ -219,26 +219,38 @@
         const transactionId = urlParams.get('t') || urlParams.get('TransactionId') || urlParams.get('OrderCode');
         const orderCode = urlParams.get('OrderCode');
         const eventId = urlParams.get('EventId');
+        const merchantTrns = urlParams.get('s'); // MerchantTrns parameter from Viva
 
-        // Get pending purchase info to determine payment type
+        // Determine payment type from URL parameters or merchantTrns
+        // MerchantTrns format: "plan-userId" (e.g., "pages-abc123" or "monthly-abc123")
         let purchaseType = 'subscription'; // default
         let pageQuantity = 0;
         
-        try {
-            const pendingPurchaseStr = localStorage.getItem('pendingPurchase');
-            if (pendingPurchaseStr) {
-                const pendingPurchase = JSON.parse(pendingPurchaseStr);
-                purchaseType = pendingPurchase.type || 'subscription';
-                pageQuantity = pendingPurchase.pageQuantity || 0;
+        // First try to get type from URL parameter (if we add it)
+        const typeParam = urlParams.get('type');
+        if (typeParam) {
+            purchaseType = typeParam;
+            const qtyParam = urlParams.get('qty');
+            if (qtyParam) {
+                pageQuantity = parseInt(qtyParam, 10);
             }
-        } catch (e) {
-            console.log('Could not read pending purchase info:', e);
+        } 
+        // Fallback: try to parse from merchantTrns
+        else if (merchantTrns) {
+            const parts = merchantTrns.split('-');
+            if (parts.length > 0 && parts[0] === 'pages') {
+                purchaseType = 'pages';
+            }
         }
 
         // Update success message based on payment type
         const successMessageEl = document.getElementById('successMessage');
         if (purchaseType === 'pages') {
-            successMessageEl.textContent = `Your extra pages payment has been processed successfully. You now have extra ${pageQuantity.toLocaleString()} pages to detect with SubWatch.`;
+            if (pageQuantity > 0) {
+                successMessageEl.textContent = `Your extra pages payment has been processed successfully. You now have extra ${pageQuantity.toLocaleString()} pages to detect with SubWatch.`;
+            } else {
+                successMessageEl.textContent = 'Your extra pages payment has been processed successfully. You now have extra pages to detect with SubWatch.';
+            }
         } else {
             successMessageEl.textContent = 'Your subscription payment has been processed successfully. You now have full access to SubWatch premium features.';
         }
@@ -277,9 +289,16 @@
                 transactionId: transactionId,
                 orderCode: orderCode,
                 eventId: eventId,
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                purchaseType: purchaseType,
+                pageQuantity: pageQuantity
             }, '*');
         }
+
+        // Debug log to console
+        console.log('[SubWatch Success] Payment type:', purchaseType);
+        console.log('[SubWatch Success] Page quantity:', pageQuantity);
+        console.log('[SubWatch Success] MerchantTrns:', merchantTrns);
     </script>
 </body>
 </html>

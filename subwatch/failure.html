@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Failed - SubWatch</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 48px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 24px;
+            animation: scaleIn 0.5s ease-out 0.2s both;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .cross {
+            width: 40px;
+            height: 40px;
+            stroke: white;
+            stroke-width: 3;
+            stroke-linecap: round;
+            fill: none;
+            animation: drawCross 0.5s ease-out 0.5s both;
+        }
+
+        @keyframes drawCross {
+            0% {
+                stroke-dasharray: 0, 100;
+            }
+            100% {
+                stroke-dasharray: 100, 100;
+            }
+        }
+
+        h1 {
+            color: #1a202c;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        p {
+            color: #4a5568;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .error-details {
+            background: #fff5f5;
+            border: 1px solid #feb2b2;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 32px;
+            text-align: left;
+        }
+
+        .error-title {
+            color: #c53030;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .error-message {
+            color: #742a2a;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .reasons {
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 32px;
+            text-align: left;
+        }
+
+        .reasons h3 {
+            color: #2d3748;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .reasons ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .reasons li {
+            color: #4a5568;
+            font-size: 14px;
+            padding: 6px 0;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .reasons li:before {
+            content: "•";
+            color: #f5576c;
+            font-weight: bold;
+            position: absolute;
+            left: 8px;
+        }
+
+        .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 8px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .button-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .button-secondary:hover {
+            background: #f7fafc;
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.2);
+        }
+
+        .support-link {
+            color: #667eea;
+            font-size: 14px;
+            margin-top: 24px;
+            display: block;
+        }
+
+        .support-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 32px 24px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            p {
+                font-size: 14px;
+            }
+
+            .button {
+                display: block;
+                margin: 8px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">
+            <svg class="cross" viewBox="0 0 52 52">
+                <line x1="16" y1="16" x2="36" y2="36" />
+                <line x1="36" y1="16" x2="16" y2="36" />
+            </svg>
+        </div>
+        
+        <h1>Payment Failed</h1>
+        <p>We couldn't process your payment. Don't worry, you haven't been charged.</p>
+        
+        <div class="error-details" id="errorDetails" style="display: none;">
+            <div class="error-title">Error Details:</div>
+            <div class="error-message" id="errorMessage"></div>
+        </div>
+
+        <div class="reasons">
+            <h3>Common reasons for payment failure:</h3>
+            <ul>
+                <li>Insufficient funds in your account</li>
+                <li>Card details entered incorrectly</li>
+                <li>Card expired or blocked</li>
+                <li>Payment cancelled by user</li>
+                <li>Bank declined the transaction</li>
+                <li>Network or connection issues</li>
+            </ul>
+        </div>
+
+        <a href="chrome-extension://ffpagmagmhlapdmoholnopeheideoojl/popup.html" class="button" id="tryAgain">Try Again</a>
+        <a href="javascript:window.close();" class="button button-secondary">Close</a>
+
+        <a href="mailto:support@subwatch.app" class="support-link">Contact Support</a>
+    </div>
+
+    <script>
+        // Parse URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const errorCode = urlParams.get('error') || urlParams.get('ErrorCode');
+        const errorText = urlParams.get('errorText') || urlParams.get('ErrorText');
+        const statusId = urlParams.get('StatusId');
+        const orderCode = urlParams.get('OrderCode');
+        const transactionId = urlParams.get('t') || urlParams.get('TransactionId');
+
+        // Display error details if available
+        if (errorCode || errorText || statusId) {
+            const errorDetails = document.getElementById('errorDetails');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            errorDetails.style.display = 'block';
+            
+            let message = '';
+            if (errorText) {
+                message = decodeURIComponent(errorText);
+            } else if (errorCode) {
+                message = `Error Code: ${errorCode}`;
+            } else if (statusId) {
+                message = `Transaction Status: ${statusId}`;
+            }
+            
+            if (orderCode) {
+                message += ` (Order: ${orderCode})`;
+            }
+            
+            errorMessage.textContent = message;
+        }
+
+        // Store failure flag for extension to check
+        try {
+            localStorage.setItem('subwatch_payment_failed', 'true');
+            localStorage.setItem('subwatch_payment_timestamp', Date.now().toString());
+            if (errorCode) {
+                localStorage.setItem('subwatch_error_code', errorCode);
+            }
+            if (errorText) {
+                localStorage.setItem('subwatch_error_text', errorText);
+            }
+        } catch (e) {
+            console.log('Could not store payment failure flag:', e);
+        }
+
+        // Post message to extension if opened in popup
+        if (window.opener) {
+            window.opener.postMessage({
+                type: 'PAYMENT_FAILED',
+                errorCode: errorCode,
+                errorText: errorText,
+                statusId: statusId,
+                orderCode: orderCode,
+                transactionId: transactionId,
+                timestamp: Date.now()
+            }, '*');
+        }
+
+        // Update try again link with actual extension ID if available
+        if (chrome?.runtime?.id) {
+            document.getElementById('tryAgain').href = `chrome-extension://${chrome.runtime.id}/popup.html`;
+        }
+    </script>
+</body>
+</html>

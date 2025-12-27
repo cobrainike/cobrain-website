@@ -221,25 +221,30 @@
         const eventId = urlParams.get('EventId');
         const merchantTrns = urlParams.get('s'); // MerchantTrns parameter from Viva
 
-        // Determine payment type from URL parameters or merchantTrns
-        // MerchantTrns format: "plan-userId" (e.g., "pages-abc123" or "monthly-abc123")
+        // Determine payment type from localStorage (set when payment was initiated)
         let purchaseType = 'subscription'; // default
         let pageQuantity = 0;
         
-        // First try to get type from URL parameter (if we add it)
+        // Try to get from localStorage first (most reliable)
+        try {
+            const pendingPurchaseStr = localStorage.getItem('pendingPurchase');
+            if (pendingPurchaseStr) {
+                const pendingPurchase = JSON.parse(pendingPurchaseStr);
+                purchaseType = pendingPurchase.type || 'subscription';
+                pageQuantity = pendingPurchase.pageQuantity || 0;
+                console.log('[SubWatch Success] Retrieved from localStorage:', { purchaseType, pageQuantity });
+            }
+        } catch (e) {
+            console.log('[SubWatch Success] Could not read from localStorage:', e);
+        }
+        
+        // Fallback: try URL parameter
         const typeParam = urlParams.get('type');
         if (typeParam) {
             purchaseType = typeParam;
             const qtyParam = urlParams.get('qty');
             if (qtyParam) {
                 pageQuantity = parseInt(qtyParam, 10);
-            }
-        } 
-        // Fallback: try to parse from merchantTrns
-        else if (merchantTrns) {
-            const parts = merchantTrns.split('-');
-            if (parts.length > 0 && parts[0] === 'pages') {
-                purchaseType = 'pages';
             }
         }
 

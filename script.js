@@ -95,11 +95,11 @@ document.addEventListener("DOMContentLoaded", () => {
 // Typing effect for hero title
 function typeWriter(element, text, speed = 100) {
   let i = 0;
-  element.innerHTML = "";
+  element.textContent = ""; // Use textContent instead of innerHTML
 
   function type() {
     if (i < text.length) {
-      element.innerHTML += text.charAt(i);
+      element.textContent += text.charAt(i);
       i++;
       setTimeout(type, speed);
     }

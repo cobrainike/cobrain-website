@@ -3,55 +3,523 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SubWatch Payment Pages</title>
+    <title>SubWatch - AI-Powered Subscription Tracker</title>
+    <meta name="description" content="Never get surprised by subscription charges again. AI-powered Chrome extension that automatically detects your subscriptions and reminds you before you get charged.">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5568d3;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --text-dark: #1a202c;
+            --text-light: #4a5568;
+            --text-muted: #718096;
+            --bg-light: #f7fafc;
+            --bg-white: #ffffff;
+            --border: #e2e8f0;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--bg-white);
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        header > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: var(--primary);
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Section */
+        section {
+            padding: 4rem 0;
+        }
+
+        section:nth-child(even) {
+            background: var(--bg-light);
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
             max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .feature-card p {
+            color: var(--text-light);
             line-height: 1.6;
         }
-        h1 { color: #667eea; }
-        .info-box {
-            background: #f7fafc;
-            border-left: 4px solid #667eea;
-            padding: 16px;
-            margin: 20px 0;
+
+        /* Screenshots Gallery */
+        .screenshots {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
         }
-        a { color: #667eea; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        code {
-            background: #e2e8f0;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-family: monospace;
+
+        .screenshot-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .screenshot-card:hover {
+            transform: scale(1.02);
+        }
+
+        .screenshot-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        /* How It Works */
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .step {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 50%;
+            line-height: 60px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .step h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .step p {
+            color: var(--text-light);
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .stat {
+            padding: 2rem;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            text-align: center;
+            padding: 5rem 2rem;
+        }
+
+        .cta-section h2 {
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--text-dark);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .tagline {
+                font-size: 1.2rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .screenshots {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>SubWatch Payment Redirect Pages</h1>
-    <p>This directory contains the payment redirect pages for the SubWatch Chrome Extension.</p>
-    
-    <div class="info-box">
-        <strong>Environment:</strong> staging<br>
-        <strong>Last Updated:</strong> 2026-01-16 22:37:07<br>
-    </div>
+    <!-- Header -->
+    <header>
+        <div class="logo">📱</div>
+        <h1>SubWatch</h1>
+        <p class="tagline">Never get surprised by subscription charges again</p>
+        <a href="#install" class="cta-button">Get Started Free</a>
+    </header>
 
-    <h2>Available Pages</h2>
-    <ul>
-        <li><a href="success.html">Success Page</a> - Payment successful redirect</li>
-        <li><a href="failure.html">Failure Page</a> - Payment failed redirect</li>
-    </ul>
+    <!-- Hero Section -->
+    <section>
+        <div class="container">
+            <h2>AI-Powered Subscription Tracking</h2>
+            <p class="section-subtitle">
+                Ever been surprised by a $99 charge from a service you forgot you subscribed to? 
+                SubWatch uses AI to automatically detect your subscriptions and reminds you before charges hit your card.
+            </p>
+        </div>
+    </section>
 
-    <h2>Usage</h2>
-    <p>These pages are used as redirect URLs for Viva Wallet payment processing:</p>
-    <ul>
-        <li><strong>Success URL:</strong> <code>https://cobrainike.github.io/subwatch/success.html</code></li>
-        <li><strong>Failure URL:</strong> <code>https://cobrainike.github.io/subwatch/failure.html</code></li>
-    </ul>
+    <!-- Features -->
+    <section>
+        <div class="container">
+            <h2>✨ Key Features</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI-Powered Auto-Detection</h3>
+                    <p>Instantly detects subscriptions as you browse Netflix, Spotify, Adobe, and more. Extracts pricing, billing cycle, and next charge date automatically.</p>
+                </div>
 
-    <h2>About SubWatch</h2>
-    <p>SubWatch is an AI-powered subscription tracker that helps you manage your recurring payments and avoid unwanted charges.</p>
+                <div class="feature-card">
+                    <div class="feature-icon">📧</div>
+                    <h3>Smart Email Reminders</h3>
+                    <p>Get notified 3 days before each charge. Beautiful HTML emails with all subscription details. Never miss a cancellation deadline again.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Dashboard Overview</h3>
+                    <p>See all your subscriptions in one place. Track total monthly/yearly spending and visualize your subscription expenses.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Privacy-First</h3>
+                    <p>End-to-end encryption for sensitive data. Firebase authentication. Your data stays yours—no selling to third parties.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Smart Tracking</h3>
+                    <p>Automatically tracks free trials, annual renewals, and monthly subscriptions. Edit details or add subscriptions manually anytime.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>Save Money</h3>
+                    <p>Avoid forgotten subscriptions and unwanted charges. Cancel subscriptions before they renew and take control of your spending.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Screenshots -->
+    <section>
+        <div class="container">
+            <h2>📸 See It In Action</h2>
+            <p class="section-subtitle">
+                SubWatch seamlessly integrates into your browsing experience
+            </p>
+
+            <div class="screenshots">
+                <div class="screenshot-card">
+                    <img src="assets/image1.svg" alt="SubWatch Dashboard">
+                </div>
+                <div class="screenshot-card">
+                    <img src="assets/image2.svg" alt="Subscription Detection">
+                </div>
+                <div class="screenshot-card">
+                    <img src="assets/image3.svg" alt="Email Reminders">
+                </div>
+                <div class="screenshot-card">
+                    <img src="assets/image4.svg" alt="Subscription Management">
+                </div>
+                <div class="screenshot-card">
+                    <img src="assets/image5.svg" alt="Settings">
+                </div>
+                <div class="screenshot-card">
+                    <img src="assets/image6.svg" alt="Analytics">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section>
+        <div class="container">
+            <h2>🚀 How It Works</h2>
+            <p class="section-subtitle">
+                Get started in minutes with our simple 4-step process
+            </p>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Install Extension</h3>
+                    <p>Add SubWatch to Chrome in one click</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Sign Up</h3>
+                    <p>Create your account with email authentication</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Browse Normally</h3>
+                    <p>AI detects subscriptions automatically as you sign up for services</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Get Reminders</h3>
+                    <p>Receive email notifications before each charge</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section>
+        <div class="container">
+            <h2>💰 The Subscription Problem</h2>
+            <p class="section-subtitle">
+                Most people are losing money on forgotten subscriptions
+            </p>
+
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number">12+</div>
+                    <div class="stat-label">Average subscriptions per person</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-number">42%</div>
+                    <div class="stat-label">Forget about at least one subscription</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-number">$1,800</div>
+                    <div class="stat-label">Wasted yearly on unused subscriptions</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-number">$273</div>
+                    <div class="stat-label">Actual monthly spending vs $86 perceived</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Perfect For -->
+    <section>
+        <div class="container">
+            <h2>🎯 Perfect For</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎬</div>
+                    <h3>Streaming Fans</h3>
+                    <p>Netflix, Hulu, Disney+, HBO Max, Spotify, Apple Music, and more</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💼</div>
+                    <h3>SaaS Users</h3>
+                    <p>Adobe, Canva, Grammarly, Notion, Slack, and productivity tools</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💪</div>
+                    <h3>Fitness Members</h3>
+                    <p>Gym memberships, fitness apps, and wellness subscriptions</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💳</div>
+                    <h3>Budget Conscious</h3>
+                    <p>Anyone trying to reduce monthly expenses and track spending</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" id="install">
+        <div class="container">
+            <h2>Ready to Take Control?</h2>
+            <p>Stop losing money to forgotten subscriptions. Start tracking today!</p>
+            <a href="https://chrome.google.com/webstore" class="cta-button">Install SubWatch Now</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 SubWatch. All rights reserved.</p>
+        </div>
+    </footer>
 </body>
 </html>
